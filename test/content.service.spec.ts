@@ -11,7 +11,6 @@ import { NotFoundException, UnauthorizedException } from '@nestjs/common';
 describe('ContentService', () => {
   let service: ContentService;
   let model: Model<Content>;
-  let httpService: HttpService;
 
   const mockContent = {
     _id: 'mockId',
@@ -52,27 +51,26 @@ describe('ContentService', () => {
 
     service = module.get<ContentService>(ContentService);
     model = module.get<Model<Content>>(getModelToken('Content'));
-    httpService = module.get<HttpService>(HttpService);
   });
 
   it('should be defined', () => {
     expect(service).toBeDefined();
   });
 
-//   it('should create a new content', async () => {
-//     const result = await service.create(mockContentDto, 'mockToken');
-//     expect(result).toEqual(mockContent);
-//     expect(model.create).toHaveBeenCalledWith(mockContentDto);
-//   });
+  //   it('should create a new content', async () => {
+  //     const result = await service.create(mockContentDto, 'mockToken');
+  //     expect(result).toEqual(mockContent);
+  //     expect(model.create).toHaveBeenCalledWith(mockContentDto);
+  //   });
 
-//   it('should call the external API when creating content', async () => {
-//     await service.create(mockContentDto, 'mockToken');
-//     expect(httpService.post).toHaveBeenCalledWith(
-//       'external-api-url',
-//       mockContentDto,
-//       { headers: { Authorization: 'Bearer mockToken' } },
-//     );
-//   });
+  //   it('should call the external API when creating content', async () => {
+  //     await service.create(mockContentDto, 'mockToken');
+  //     expect(httpService.post).toHaveBeenCalledWith(
+  //       'external-api-url',
+  //       mockContentDto,
+  //       { headers: { Authorization: 'Bearer mockToken' } },
+  //     );
+  //   });
 
   it('should throw NotFoundException if content is not found', async () => {
     jest.spyOn(model, 'findById').mockReturnValueOnce({

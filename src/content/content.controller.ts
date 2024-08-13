@@ -23,14 +23,14 @@ export class ContentController {
   ) {
     const authHeader = req.headers.authorization as string;
     const token = authHeader?.split(' ')[1];
-  
+
     if (!token) {
       throw new UnauthorizedException('Token not found');
     }
-  
+
     return this.contentService.create(createContentDto, token);
   }
-  
+
   @Get()
   async findAll() {
     return this.contentService.findAll();

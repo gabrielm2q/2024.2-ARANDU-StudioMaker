@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
-import { HttpModule } from '@nestjs/axios'; 
+import { HttpModule } from '@nestjs/axios';
 import { ContentModule } from './content/content.module';
 import * as Joi from 'joi';
 
@@ -21,8 +21,8 @@ import * as Joi from 'joi';
       }),
       inject: [ConfigService],
     }),
-    HttpModule, 
-    ContentModule
+    HttpModule,
+    ContentModule,
   ],
   controllers: [],
   providers: [],

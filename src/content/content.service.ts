@@ -16,7 +16,7 @@ export class ContentService {
   private readonly logger = new Logger(ContentService.name);
 
   constructor(
-    @InjectModel('Content') private readonly contentModel: Model<Content>,    
+    @InjectModel('Content') private readonly contentModel: Model<Content>,
     private readonly httpService: HttpService,
   ) {}
 
@@ -56,7 +56,6 @@ export class ContentService {
       return null;
     }
   }
-  
 
   async findAll(): Promise<Content[]> {
     return this.contentModel.find().exec();

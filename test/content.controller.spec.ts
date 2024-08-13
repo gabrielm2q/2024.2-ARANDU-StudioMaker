@@ -37,7 +37,9 @@ describe('ContentController', () => {
       const dto: CreateContentDto = { title: 'Test', body: 'Test body' };
       const req = { headers: { authorization: '' } } as any;
 
-      await expect(controller.create(dto, req)).rejects.toThrow(UnauthorizedException);
+      await expect(controller.create(dto, req)).rejects.toThrow(
+        UnauthorizedException,
+      );
     });
 
     it('should call service.create with correct parameters', async () => {
@@ -74,7 +76,10 @@ describe('ContentController', () => {
 
   describe('update', () => {
     it('should call service.update with correct parameters', async () => {
-      const dto: CreateContentDto = { title: 'Updated Test', body: 'Updated body' };
+      const dto: CreateContentDto = {
+        title: 'Updated Test',
+        body: 'Updated body',
+      };
       const result = { ...dto, id: '1' };
 
       jest.spyOn(service, 'update').mockResolvedValue(result as any);
