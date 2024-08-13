@@ -1,9 +1,17 @@
 import type { Config } from 'jest';
 import * as dotenv from 'dotenv';
 
-dotenv.config(); 
+dotenv.config();
+
 const config: Config = {
-  preset: 'ts-jest',
+  moduleFileExtensions: ['js', 'json', 'ts'],
+  rootDir: './test',
+  testRegex: '.*\\.spec\\.ts$',
+  transform: {
+    '^.+\\.(t|j)s$': 'ts-jest',
+  },
+  collectCoverageFrom: ['**/*.(t|j)s'],
+  coverageDirectory: '../coverage',
   testEnvironment: 'node',
   reporters: [
     'default',
@@ -15,10 +23,6 @@ const config: Config = {
       },
     ],
   ],
-  moduleNameMapper: {
-    '^src/(.*)$': '<rootDir>/src/$1',
-  },
-  setupFiles: ['dotenv/config'], 
 };
 
 export default config;
