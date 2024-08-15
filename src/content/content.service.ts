@@ -81,4 +81,12 @@ export class ContentService {
     }
     return content;
   }
+
+  async delete(id: string): Promise<Content> {
+    const content = await this.contentModel.findByIdAndDelete(id).exec();
+    if (!content) {
+      throw new NotFoundException(`Content with ID ${id} not found`);
+    }
+    return content;
+  }
 }

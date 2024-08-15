@@ -7,6 +7,7 @@ import {
   Put,
   Req,
   UnauthorizedException,
+  Delete,
 } from '@nestjs/common';
 import { ContentService } from './content.service';
 import { CreateContentDto } from './dtos/create-content.dto';
@@ -47,5 +48,10 @@ export class ContentController {
     @Body() updateContentDto: CreateContentDto,
   ) {
     return this.contentService.update(id, updateContentDto);
+  }
+
+  @Delete(':id')
+  async delete(@Param('id') id: string) {
+    return this.contentService.delete(id);
   }
 }
