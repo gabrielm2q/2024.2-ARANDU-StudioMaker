@@ -8,6 +8,7 @@ import {
   Req,
   UnauthorizedException,
   Delete,
+  Patch,
 } from '@nestjs/common';
 import { JourneyService } from './journey.service';
 import { Request } from 'express';
@@ -53,5 +54,13 @@ export class JourneyController {
   @Delete(':id')
   async delete(@Param('id') id: string) {
     return this.journeyService.delete(id);
+  }
+
+  @Patch(':id/add-trail')
+  async addTrailToJourney(
+    @Param('id') id: string,
+    @Body() body: { trailId: string },
+  ) {
+    return this.journeyService.addTrailToJourney(id, body.trailId);
   }
 }

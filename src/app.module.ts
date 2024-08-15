@@ -5,6 +5,7 @@ import { HttpModule } from '@nestjs/axios';
 import { ContentModule } from './content/content.module';
 import * as Joi from 'joi';
 import { JourneyModule } from './journey/journey.module';
+import { TrailModule } from './trail/trail.module';
 
 @Module({
   imports: [
@@ -25,6 +26,7 @@ import { JourneyModule } from './journey/journey.module';
     HttpModule,
     ContentModule,
     JourneyModule,
+    TrailModule,
   ],
   controllers: [],
   providers: [],

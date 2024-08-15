@@ -3,8 +3,16 @@ import * as mongoose from 'mongoose';
 export const TrailSchema = new mongoose.Schema(
   {
     name: { type: String, required: true },
-    description: { type: String },
-    journey: { type: mongoose.Schema.Types.ObjectId, ref: 'Journey' },
+    journey: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Journey',
+      required: true,
+    },
   },
   { timestamps: true, collection: 'trails' },
 );
+
+export interface Trail extends mongoose.Document {
+  name: string;
+  journey: mongoose.Schema.Types.ObjectId;
+}

@@ -7,7 +7,7 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
 import { Journey } from './journey.schema';
 import { CreateJourneyDto } from './dtos/create-journey.dto';
 
@@ -108,5 +108,25 @@ export class JourneyService {
       throw new NotFoundException(`Journey with ID ${id} not found`);
     }
     return journey;
+  }
+  
+  async addTrailToJourney(
+    journeyId: string,
+    trailId: string,
+  ): Promise<Journey> {
+    const journey = await this.journeyModel.findById(journeyId).exec();
+    if (!journey) {
+      throw new NotFoundException(`Journey with ID ${journeyId} not found`);
+    }
+
+    const objectId = new Types.ObjectId(trailId);
+
+    if (!journey.trails) {
+      journey.trails = [];
+    }
+
+    journey.trails.push(objectId);
+
+    return journey.save();
   }
 }
