@@ -1,0 +1,57 @@
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Param,
+  Put,
+  Req,
+  UnauthorizedException,
+  Delete,
+} from '@nestjs/common';
+import { JourneyService } from './journey.service';
+import { Request } from 'express';
+import { CreateJourneyDto } from './dtos/create-journey.dto';
+
+@Controller('journeys')
+export class JourneyController {
+  constructor(private readonly journeyService: JourneyService) {}
+
+  @Post()
+  async create(
+    @Body() createJourneyDto: CreateJourneyDto,
+    @Req() req: Request,
+  ) {
+    const authHeader = req.headers.authorization as string;
+    const token = authHeader?.split(' ')[1];
+
+    if (!token) {
+      throw new UnauthorizedException('Token not found');
+    }
+
+    return this.journeyService.create(createJourneyDto, token);
+  }
+
+  @Get()
+  async findAll() {
+    return this.journeyService.findAll();
+  }
+
+  @Get(':id')
+  async findById(@Param('id') id: string) {
+    return this.journeyService.findById(id);
+  }
+
+  @Put(':id')
+  async update(
+    @Param('id') id: string,
+    @Body() updateJourneyDto: CreateJourneyDto,
+  ) {
+    return this.journeyService.update(id, updateJourneyDto);
+  }
+
+  @Delete(':id')
+  async delete(@Param('id') id: string) {
+    return this.journeyService.delete(id);
+  }
+}

@@ -4,6 +4,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { HttpModule } from '@nestjs/axios';
 import { ContentModule } from './content/content.module';
 import * as Joi from 'joi';
+import { JourneyModule } from './journey/journey.module';
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import * as Joi from 'joi';
     }),
     HttpModule,
     ContentModule,
+    JourneyModule,
   ],
   controllers: [],
   providers: [],
