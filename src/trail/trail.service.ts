@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
 import { Trail } from './trail.schema';
 import { Journey } from 'src/journey/journey.schema';
 import { JourneyService } from 'src/journey/journey.service';
@@ -37,6 +37,24 @@ export class TrailService {
 
     return newTrail.save();
   }
+
+  async addContentToTrail(trailId: string, contentId: string): Promise<Trail> {
+    const trail = await this.trailModel.findById(trailId).exec();
+    if (!trail) {
+      throw new NotFoundException(`Trail with ID ${trailId} not found`);
+    }
+
+    const objectId = new Types.ObjectId(contentId);
+
+    if (!trail.contents) {
+      trail.contents = [];
+    }
+
+    trail.contents.push(objectId);
+
+    return trail.save();
+  }
+
 
   async findTrailById(id: string): Promise<Trail> {
     const trail = await this.trailModel.findById(id).exec();

@@ -38,7 +38,6 @@ export class JourneyService {
     });
     const savedJourney = await newJourney.save();
 
-    // Atualizar o usuário com o novo ID de jornada
     await this.addJourneyToUser(userId, savedJourney._id.toString());
 
     return savedJourney;

@@ -1,21 +1,15 @@
-import { IsString, IsOptional, IsMongoId } from 'class-validator';
+import { IsString, IsNotEmpty, IsMongoId } from 'class-validator';
 
 export class CreateContentDto {
   @IsString()
+  @IsNotEmpty()
   title: string;
 
   @IsString()
+  @IsNotEmpty()
   body: string;
 
-  @IsOptional()
   @IsMongoId()
-  user?: string;
-
-  @IsOptional()
-  @IsMongoId()
-  trail?: string;
-
-  @IsOptional()
-  @IsMongoId()
-  journey?: string;
+  @IsNotEmpty()
+  trail: string; 
 }

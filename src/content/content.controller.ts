@@ -1,57 +1,53 @@
 import {
   Controller,
-  Get,
   Post,
-  Body,
-  Param,
-  Put,
-  Req,
-  UnauthorizedException,
+  Get,
+  Patch,
   Delete,
+  Param,
+  Body,
+  Headers,
+  NotFoundException,
 } from '@nestjs/common';
 import { ContentService } from './content.service';
-import { CreateContentDto } from './dtos/create-content.dto';
-import { Request } from 'express';
+import { Content } from './content.schema';
 
 @Controller('contents')
 export class ContentController {
   constructor(private readonly contentService: ContentService) {}
 
   @Post()
-  async create(
-    @Body() createContentDto: CreateContentDto,
-    @Req() req: Request,
-  ) {
-    const authHeader = req.headers.authorization as string;
-    const token = authHeader?.split(' ')[1];
-
-    if (!token) {
-      throw new UnauthorizedException('Token not found');
+  async createContent(
+    @Body('title') title: string,
+    @Body('body') body: string,
+    @Headers('trailId') trailId: string,
+  ): Promise<Content> {
+    if (!title || !body || !trailId) {
+      throw new NotFoundException('Title, body, and trailId are required');
     }
-
-    return this.contentService.create(createContentDto, token);
-  }
-
-  @Get()
-  async findAll() {
-    return this.contentService.findAll();
+    return this.contentService.createContent(title, body, trailId);
   }
 
   @Get(':id')
-  async findById(@Param('id') id: string) {
-    return this.contentService.findById(id);
+  async findContentById(@Param('id') id: string): Promise<Content> {
+    return this.contentService.findContentById(id);
   }
 
-  @Put(':id')
-  async update(
+  @Get()
+  async findAllContents(): Promise<Content[]> {
+    return this.contentService.findAllContents();
+  }
+
+  @Patch(':id')
+  async updateContent(
     @Param('id') id: string,
-    @Body() updateContentDto: CreateContentDto,
-  ) {
-    return this.contentService.update(id, updateContentDto);
+    @Body() updateData: Partial<Content>,
+  ): Promise<Content> {
+    return this.contentService.updateContent(id, updateData);
   }
 
   @Delete(':id')
-  async delete(@Param('id') id: string) {
-    return this.contentService.delete(id);
+  async deleteContent(@Param('id') id: string): Promise<void> {
+    return this.contentService.deleteContent(id);
   }
 }
