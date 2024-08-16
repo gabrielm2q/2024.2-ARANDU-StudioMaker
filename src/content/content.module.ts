@@ -8,10 +8,10 @@ import { TrailModule } from '../trail/trail.module';
 @Module({
   imports: [
     MongooseModule.forFeature([{ name: 'Content', schema: ContentSchema }]),
-    forwardRef(() => TrailModule),  
+    forwardRef(() => TrailModule),
   ],
   providers: [ContentService],
   controllers: [ContentController],
-  exports: [ContentService], 
+  exports: [ContentService],
 })
 export class ContentModule {}

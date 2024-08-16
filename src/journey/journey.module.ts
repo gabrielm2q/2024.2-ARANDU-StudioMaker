@@ -13,6 +13,5 @@ import { JourneyController } from './journey.controller';
   providers: [JourneyService],
   controllers: [JourneyController],
   exports: [MongooseModule, JourneyService],
-
 })
 export class JourneyModule {}

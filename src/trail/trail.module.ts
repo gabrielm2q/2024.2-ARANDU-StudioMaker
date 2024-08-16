@@ -10,7 +10,7 @@ import { ContentModule } from '../content/content.module';
   imports: [
     MongooseModule.forFeature([{ name: 'Trail', schema: TrailSchema }]),
     JourneyModule,
-    forwardRef(() => ContentModule), 
+    forwardRef(() => ContentModule),
   ],
   providers: [TrailService],
   controllers: [TrailController],

@@ -11,14 +11,9 @@ export class TrailService {
     @InjectModel('Trail') private readonly trailModel: Model<Trail>,
     @InjectModel('Journey') private readonly journeyModel: Model<Journey>,
     private readonly journeyService: JourneyService,
-
   ) {}
 
-  async createTrail(
-    name: string,
-    description: string,
-    journeyId: string,
-  ): Promise<Trail> {
+  async createTrail(name: string, journeyId: string): Promise<Trail> {
     const journeyExists = await this.journeyModel.findById(journeyId).exec();
     if (!journeyExists) {
       throw new NotFoundException(`Journey with ID ${journeyId} not found`);
@@ -26,7 +21,6 @@ export class TrailService {
 
     const newTrail = new this.trailModel({
       name,
-      description,
       journey: journeyId,
     });
 
@@ -54,7 +48,6 @@ export class TrailService {
 
     return trail.save();
   }
-
 
   async findTrailById(id: string): Promise<Trail> {
     const trail = await this.trailModel.findById(id).exec();

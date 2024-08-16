@@ -14,5 +14,5 @@ export interface Journey extends mongoose.Document {
   title: string;
   description: string;
   user: mongoose.Schema.Types.ObjectId;
-  trails?: mongoose.Types.ObjectId[]; 
+  trails?: mongoose.Types.ObjectId[];
 }

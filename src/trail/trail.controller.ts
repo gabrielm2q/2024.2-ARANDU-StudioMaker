@@ -7,7 +7,6 @@ import {
   Param,
   Body,
   NotFoundException,
-  Headers,
 } from '@nestjs/common';
 import { TrailService } from './trail.service';
 
@@ -16,18 +15,14 @@ export class TrailController {
   constructor(private readonly trailService: TrailService) {}
 
   @Post()
-  async createTrail(
-    @Body() body: { name: string; description?: string },
-    @Headers('journey-id') journeyId: string,
-  ) {
+  async createTrail(@Body() body: { name: string; journeyId: string }) {
+    const { name, journeyId } = body;
+
     if (!journeyId) {
-      throw new NotFoundException('Journey ID not provided in header');
+      throw new NotFoundException('Journey ID not provided in body');
     }
-    return this.trailService.createTrail(
-      body.name,
-      body.description,
-      journeyId,
-    );
+
+    return this.trailService.createTrail(name, journeyId);
   }
 
   @Get(':id')

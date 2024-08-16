@@ -7,9 +7,9 @@ export class CreateContentDto {
 
   @IsString()
   @IsNotEmpty()
-  body: string;
+  content: string;
 
   @IsMongoId()
   @IsNotEmpty()
-  trail: string; 
+  trail: string;
 }

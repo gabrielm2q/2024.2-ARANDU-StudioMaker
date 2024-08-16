@@ -15,7 +15,7 @@ export class ContentService {
 
   async createContent(
     title: string,
-    body: string,
+    content: string,
     trailId: string,
   ): Promise<Content> {
     const trailExists = await this.trailModel.findById(trailId).exec();
@@ -25,7 +25,7 @@ export class ContentService {
 
     const newContent = new this.contentModel({
       title,
-      body,
+      content,
       trail: trailId,
     });
 

@@ -4,7 +4,7 @@ export const TrailSchema = new mongoose.Schema(
   {
     name: { type: String, required: true },
     journey: { type: mongoose.Schema.Types.ObjectId, ref: 'Journey' },
-    contents: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Content' }], 
+    contents: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Content' }],
   },
   { timestamps: true, collection: 'trails' },
 );

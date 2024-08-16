@@ -108,7 +108,7 @@ export class JourneyService {
     }
     return journey;
   }
-  
+
   async addTrailToJourney(
     journeyId: string,
     trailId: string,

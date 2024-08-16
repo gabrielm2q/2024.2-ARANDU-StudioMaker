@@ -18,14 +18,15 @@ export class ContentController {
 
   @Post()
   async createContent(
-    @Body('title') title: string,
-    @Body('body') body: string,
-    @Headers('trailId') trailId: string,
+    @Body() body: { title: string; content: string; trailId: string },
   ): Promise<Content> {
-    if (!title || !body || !trailId) {
-      throw new NotFoundException('Title, body, and trailId are required');
+    const { title, content, trailId } = body;
+
+    if (!title || !content || !trailId) {
+      throw new NotFoundException('Title, content, and trailId are required');
     }
-    return this.contentService.createContent(title, body, trailId);
+
+    return this.contentService.createContent(title, content, trailId);
   }
 
   @Get(':id')
