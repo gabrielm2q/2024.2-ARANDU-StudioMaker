@@ -37,11 +37,9 @@ export class JourneyController {
   async findAll() {
     return this.journeyService.findAll();
   }
-  
+
   @Get('user/:id')
-  async findByUser(
-    @Param('id') userId: string,
-  ) {
+  async findByUser(@Param('id') userId: string) {
     return this.journeyService.findByUserId(userId);
   }
 
