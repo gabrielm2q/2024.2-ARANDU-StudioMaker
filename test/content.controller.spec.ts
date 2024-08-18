@@ -1,12 +1,20 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { ContentController } from '../src/content/content.controller';
-import { ContentService } from '../src/content/content.service';
-import { CreateContentDto } from '../src/content/dtos/create-content.dto';
-import { UnauthorizedException } from '@nestjs/common';
+
+import { NotFoundException } from '@nestjs/common';
+import { ContentController } from 'src/content/content.controller';
+import { ContentService } from 'src/content/content.service';
+import { Content } from 'src/content/content.schema';
 
 describe('ContentController', () => {
   let controller: ContentController;
-  let service: ContentService;
+
+  const mockContentService = {
+    createContent: jest.fn(),
+    findContentById: jest.fn(),
+    findAllContents: jest.fn(),
+    updateContent: jest.fn(),
+    deleteContent: jest.fn(),
+  };
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -14,78 +22,143 @@ describe('ContentController', () => {
       providers: [
         {
           provide: ContentService,
-          useValue: {
-            create: jest.fn(),
-            findAll: jest.fn(),
-            findById: jest.fn(),
-            update: jest.fn(),
-          },
+          useValue: mockContentService,
         },
       ],
     }).compile();
 
     controller = module.get<ContentController>(ContentController);
-    service = module.get<ContentService>(ContentService);
   });
 
   it('should be defined', () => {
     expect(controller).toBeDefined();
   });
 
-  describe('create', () => {
-    it('should throw UnauthorizedException if no token is provided', async () => {
-      const dto: CreateContentDto = { title: 'Test', body: 'Test body' };
-      const req = { headers: { authorization: '' } } as any;
+  describe('createContent', () => {
+    it('should create content', async () => {
+      const contentDto = {
+        title: 'Test Title',
+        content: 'Test Content',
+        trailId: 'trail-id',
+      };
+      const content = {
+        _id: 'content-id',
+        ...contentDto,
+      } as unknown as Content;
 
-      await expect(controller.create(dto, req)).rejects.toThrow(
-        UnauthorizedException,
+      mockContentService.createContent.mockResolvedValue(content);
+
+      const result = await controller.createContent(contentDto);
+      expect(result).toEqual(content);
+      expect(mockContentService.createContent).toHaveBeenCalledWith(
+        contentDto.title,
+        contentDto.content,
+        contentDto.trailId,
       );
     });
 
-    it('should call service.create with correct parameters', async () => {
-      const dto: CreateContentDto = { title: 'Test', body: 'Test body' };
-      const req = { headers: { authorization: 'Bearer token' } } as any;
-      const result = { ...dto, id: '1' };
+    it('should throw NotFoundException if required fields are missing', async () => {
+      const contentDto = { title: '', content: '', trailId: '' };
 
-      jest.spyOn(service, 'create').mockResolvedValue(result as any);
-
-      expect(await controller.create(dto, req)).toBe(result);
-      expect(service.create).toHaveBeenCalledWith(dto, 'token');
+      await expect(controller.createContent(contentDto)).rejects.toThrow(
+        NotFoundException,
+      );
     });
   });
 
-  describe('findAll', () => {
-    it('should return an array of contents', async () => {
-      const result = [{ id: '1', title: 'Test', body: 'Test body' }];
+  describe('findContentById', () => {
+    it('should return content by id', async () => {
+      const content = {
+        _id: 'content-id',
+        title: 'Test Title',
+        content: 'Test Content',
+      } as Content;
 
-      jest.spyOn(service, 'findAll').mockResolvedValue(result as any);
+      mockContentService.findContentById.mockResolvedValue(content);
 
-      expect(await controller.findAll()).toBe(result);
+      const result = await controller.findContentById('content-id');
+      expect(result).toEqual(content);
+      expect(mockContentService.findContentById).toHaveBeenCalledWith(
+        'content-id',
+      );
+    });
+
+    it('should throw NotFoundException if content is not found', async () => {
+      mockContentService.findContentById.mockRejectedValue(
+        new NotFoundException(),
+      );
+
+      await expect(controller.findContentById('invalid-id')).rejects.toThrow(
+        NotFoundException,
+      );
     });
   });
 
-  describe('findById', () => {
-    it('should return a single content', async () => {
-      const result = { id: '1', title: 'Test', body: 'Test body' };
+  describe('findAllContents', () => {
+    it('should return all contents', async () => {
+      const contents = [
+        { _id: 'content-id-1', title: 'Title 1', content: 'Content 1' },
+        { _id: 'content-id-2', title: 'Title 2', content: 'Content 2' },
+      ] as Content[];
 
-      jest.spyOn(service, 'findById').mockResolvedValue(result as any);
+      mockContentService.findAllContents.mockResolvedValue(contents);
 
-      expect(await controller.findById('1')).toBe(result);
+      const result = await controller.findAllContents();
+      expect(result).toEqual(contents);
+      expect(mockContentService.findAllContents).toHaveBeenCalled();
     });
   });
 
-  describe('update', () => {
-    it('should call service.update with correct parameters', async () => {
-      const dto: CreateContentDto = {
-        title: 'Updated Test',
-        body: 'Updated body',
-      };
-      const result = { ...dto, id: '1' };
+  describe('updateContent', () => {
+    it('should update content and return the updated content', async () => {
+      const content = {
+        _id: 'content-id',
+        title: 'Updated Title',
+        content: 'Updated Content',
+      } as Content;
 
-      jest.spyOn(service, 'update').mockResolvedValue(result as any);
+      mockContentService.updateContent.mockResolvedValue(content);
 
-      expect(await controller.update('1', dto)).toBe(result);
-      expect(service.update).toHaveBeenCalledWith('1', dto);
+      const updateData = { title: 'Updated Title', content: 'Updated Content' };
+      const result = await controller.updateContent('content-id', updateData);
+      expect(result).toEqual(content);
+      expect(mockContentService.updateContent).toHaveBeenCalledWith(
+        'content-id',
+        updateData,
+      );
+    });
+
+    it('should throw NotFoundException if content is not found', async () => {
+      mockContentService.updateContent.mockRejectedValue(
+        new NotFoundException(),
+      );
+
+      await expect(controller.updateContent('invalid-id', {})).rejects.toThrow(
+        NotFoundException,
+      );
+    });
+  });
+
+  describe('deleteContent', () => {
+    it('should delete content', async () => {
+      mockContentService.deleteContent.mockResolvedValue(undefined);
+
+      await expect(
+        controller.deleteContent('content-id'),
+      ).resolves.not.toThrow();
+      expect(mockContentService.deleteContent).toHaveBeenCalledWith(
+        'content-id',
+      );
+    });
+
+    it('should throw NotFoundException if content is not found', async () => {
+      mockContentService.deleteContent.mockRejectedValue(
+        new NotFoundException(),
+      );
+
+      await expect(controller.deleteContent('invalid-id')).rejects.toThrow(
+        NotFoundException,
+      );
     });
   });
 });

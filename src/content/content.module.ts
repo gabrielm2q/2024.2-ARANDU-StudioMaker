@@ -1,16 +1,17 @@
-import { Module } from '@nestjs/common';
+import { Module, forwardRef } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ContentSchema } from './content.schema';
 import { ContentService } from './content.service';
 import { ContentController } from './content.controller';
-import { HttpModule } from '@nestjs/axios';
+import { TrailModule } from '../trail/trail.module';
 
 @Module({
   imports: [
-    HttpModule,
     MongooseModule.forFeature([{ name: 'Content', schema: ContentSchema }]),
+    forwardRef(() => TrailModule),
   ],
   providers: [ContentService],
   controllers: [ContentController],
+  exports: [ContentService],
 })
 export class ContentModule {}

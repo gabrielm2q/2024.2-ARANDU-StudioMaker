@@ -1,67 +1,43 @@
-import {
-  Injectable,
-  Logger,
-  NotFoundException,
-  UnauthorizedException,
-} from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Content } from './content.schema';
-import { CreateContentDto } from './dtos/create-content.dto';
-import { HttpService } from '@nestjs/axios';
-import { firstValueFrom } from 'rxjs';
+import { Trail } from '../trail/trail.schema';
+import { TrailService } from '../trail/trail.service';
 
 @Injectable()
 export class ContentService {
-  private readonly logger = new Logger(ContentService.name);
-
   constructor(
     @InjectModel('Content') private readonly contentModel: Model<Content>,
-    private readonly httpService: HttpService,
+    @InjectModel('Trail') private readonly trailModel: Model<Trail>,
+    private readonly trailService: TrailService,
   ) {}
 
-  async create(
-    createContentDto: CreateContentDto,
-    token: string,
+  async createContent(
+    title: string,
+    content: string,
+    trailId: string,
   ): Promise<Content> {
-    const userId = await this.validateTokenAndGetUserId(token);
-
-    this.logger.log(`User ID from token: ${userId}`);
-
-    if (!userId) {
-      throw new UnauthorizedException('Invalid token');
+    const trailExists = await this.trailModel.findById(trailId).exec();
+    if (!trailExists) {
+      throw new NotFoundException(`Trail with ID ${trailId} not found`);
     }
 
     const newContent = new this.contentModel({
-      ...createContentDto,
-      user: userId,
+      title,
+      content,
+      trail: trailId,
     });
+
+    await this.trailService.addContentToTrail(
+      trailId,
+      newContent._id.toString(),
+    );
+
     return newContent.save();
   }
 
-  async validateTokenAndGetUserId(token: string): Promise<string | null> {
-    try {
-      this.logger.log(`Validating token: ${token}`);
-      const response = await firstValueFrom(
-        this.httpService.get(`${process.env.AUTH_SERVICE_URL}/validate-token`, {
-          headers: { Authorization: `Bearer ${token}` },
-        }),
-      );
-      this.logger.log(
-        `Token validation response: ${JSON.stringify(response.data)}`,
-      );
-      return response.data.userPayload?.id || null;
-    } catch (err) {
-      this.logger.error(`Token validation failed: ${err.message}`);
-      return null;
-    }
-  }
-
-  async findAll(): Promise<Content[]> {
-    return this.contentModel.find().exec();
-  }
-
-  async findById(id: string): Promise<Content> {
+  async findContentById(id: string): Promise<Content> {
     const content = await this.contentModel.findById(id).exec();
     if (!content) {
       throw new NotFoundException(`Content with ID ${id} not found`);
@@ -69,12 +45,16 @@ export class ContentService {
     return content;
   }
 
-  async update(
+  async findAllContents(): Promise<Content[]> {
+    return this.contentModel.find().exec();
+  }
+
+  async updateContent(
     id: string,
-    updateContentDto: CreateContentDto,
+    updateData: Partial<Content>,
   ): Promise<Content> {
     const content = await this.contentModel
-      .findByIdAndUpdate(id, updateContentDto, { new: true })
+      .findByIdAndUpdate(id, updateData, { new: true })
       .exec();
     if (!content) {
       throw new NotFoundException(`Content with ID ${id} not found`);
@@ -82,11 +62,10 @@ export class ContentService {
     return content;
   }
 
-  async delete(id: string): Promise<Content> {
-    const content = await this.contentModel.findByIdAndDelete(id).exec();
-    if (!content) {
+  async deleteContent(id: string): Promise<void> {
+    const result = await this.contentModel.findByIdAndDelete(id).exec();
+    if (!result) {
       throw new NotFoundException(`Content with ID ${id} not found`);
     }
-    return content;
   }
 }
