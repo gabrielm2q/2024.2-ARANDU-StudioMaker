@@ -80,6 +80,10 @@ export class JourneyService {
     return this.journeyModel.find().exec();
   }
 
+  async findByUserId(userId: string): Promise<Journey[]> {
+    return this.journeyModel.find({ user: userId }).exec();
+  }
+
   async findById(id: string): Promise<Journey> {
     const journey = await this.journeyModel.findById(id).exec();
     if (!journey) {
