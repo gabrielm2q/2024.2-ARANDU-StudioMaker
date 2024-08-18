@@ -43,6 +43,27 @@ export class TrailController {
     return this.trailService.updateTrail(id, updateData);
   }
 
+  @Put(':id/addContent')
+  async addContentToTrail(
+    @Param('id') trailId: string,
+    @Body() body: { contentId: string },
+  ) {
+    const { contentId } = body;
+    if (!contentId) {
+      throw new NotFoundException('Content ID not provided in body');
+    }
+    return this.trailService.addContentToTrail(trailId, contentId);
+  }
+
+  @Put(':id/removeContent')
+  async removeContentFromTrail(
+    @Param('id') trailId: string,
+    @Body() body: { contentId: string }
+  ) {
+    const { contentId } = body;
+    return this.trailService.removeContentFromTrail(trailId, contentId);
+  }
+  
   @Delete(':id')
   async deleteTrail(@Param('id') id: string) {
     await this.trailService.deleteTrail(id);
