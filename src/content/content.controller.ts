@@ -6,7 +6,6 @@ import {
   Delete,
   Param,
   Body,
-  Headers,
   NotFoundException,
 } from '@nestjs/common';
 import { ContentService } from './content.service';

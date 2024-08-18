@@ -49,16 +49,21 @@ export class TrailService {
     return trail.save();
   }
 
-  async removeContentFromTrail(trailId: string, contentId: string): Promise<Trail> {
+  async removeContentFromTrail(
+    trailId: string,
+    contentId: string,
+  ): Promise<Trail> {
     const trail = await this.trailModel.findById(trailId).exec();
     if (!trail) {
-        throw new NotFoundException(`Trail with ID ${trailId} not found`);
+      throw new NotFoundException(`Trail with ID ${trailId} not found`);
     }
 
-    trail.contents = trail.contents.filter(content => !content.equals(contentId));
+    trail.contents = trail.contents.filter(
+      (content) => !content.equals(contentId),
+    );
 
     return trail.save();
-}
+  }
 
   async findTrailById(id: string): Promise<Trail> {
     const trail = await this.trailModel.findById(id).exec();

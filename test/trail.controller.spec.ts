@@ -5,7 +5,6 @@ import { TrailService } from 'src/trail/trail.service';
 
 describe('TrailController', () => {
   let controller: TrailController;
-  let service: TrailService;
 
   const mockTrailService = {
     createTrail: jest.fn(),
@@ -29,7 +28,6 @@ describe('TrailController', () => {
     }).compile();
 
     controller = module.get<TrailController>(TrailController);
-    service = module.get<TrailService>(TrailService);
   });
 
   it('should be defined', () => {
@@ -52,7 +50,9 @@ describe('TrailController', () => {
     it('should throw NotFoundException if journeyId is not provided', async () => {
       const trailData = { name: 'Test Trail', journeyId: '' };
 
-      await expect(controller.createTrail(trailData)).rejects.toThrow(NotFoundException);
+      await expect(controller.createTrail(trailData)).rejects.toThrow(
+        NotFoundException,
+      );
     });
   });
 
@@ -100,7 +100,9 @@ describe('TrailController', () => {
       const trailId = 'trail-id';
       const contentData = { contentId: '' };
 
-      await expect(controller.addContentToTrail(trailId, contentData)).rejects.toThrow(NotFoundException);
+      await expect(
+        controller.addContentToTrail(trailId, contentData),
+      ).rejects.toThrow(NotFoundException);
     });
   });
 
@@ -108,9 +110,14 @@ describe('TrailController', () => {
     it('should remove content from a trail', async () => {
       const trailId = 'trail-id';
       const contentData = { contentId: 'content-id' };
-      mockTrailService.removeContentFromTrail.mockResolvedValue('content-removed');
+      mockTrailService.removeContentFromTrail.mockResolvedValue(
+        'content-removed',
+      );
 
-      const result = await controller.removeContentFromTrail(trailId, contentData);
+      const result = await controller.removeContentFromTrail(
+        trailId,
+        contentData,
+      );
       expect(result).toEqual('content-removed');
     });
   });

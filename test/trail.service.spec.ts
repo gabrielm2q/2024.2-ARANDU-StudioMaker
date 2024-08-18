@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { getModelToken } from '@nestjs/mongoose';
-import { Model, Types } from 'mongoose';
+import { Model } from 'mongoose';
 import { NotFoundException } from '@nestjs/common';
 import { JourneyService } from 'src/journey/journey.service';
 import { Journey } from 'src/journey/journey.schema';
@@ -11,7 +11,6 @@ describe('TrailService', () => {
   let service: TrailService;
   let trailModel: Model<Trail>;
   let journeyModel: Model<Journey>;
-  let journeyService: JourneyService;
 
   const mockTrail = {
     _id: 'mockTrailId',
@@ -66,39 +65,40 @@ describe('TrailService', () => {
     service = module.get<TrailService>(TrailService);
     trailModel = module.get<Model<Trail>>(getModelToken('Trail'));
     journeyModel = module.get<Model<Journey>>(getModelToken('Journey'));
-    journeyService = module.get<JourneyService>(JourneyService);
   });
 
   it('should be defined', () => {
     expect(service).toBeDefined();
   });
 
-
   it('should throw NotFoundException if journey is not found when creating a trail', async () => {
     jest.spyOn(journeyModel, 'findById').mockReturnValueOnce({
       exec: jest.fn().mockResolvedValue(null),
     } as any);
 
-    await expect(service.createTrail('New Trail', 'invalidJourneyId')).rejects.toThrow(NotFoundException);
+    await expect(
+      service.createTrail('New Trail', 'invalidJourneyId'),
+    ).rejects.toThrow(NotFoundException);
   });
 
- 
   it('should throw NotFoundException if trail is not found when adding content', async () => {
     jest.spyOn(trailModel, 'findById').mockReturnValueOnce({
       exec: jest.fn().mockResolvedValue(null),
     } as any);
 
-    await expect(service.addContentToTrail('invalidTrailId', 'mockContentId')).rejects.toThrow(NotFoundException);
+    await expect(
+      service.addContentToTrail('invalidTrailId', 'mockContentId'),
+    ).rejects.toThrow(NotFoundException);
   });
-
- 
 
   it('should throw NotFoundException if trail is not found when removing content', async () => {
     jest.spyOn(trailModel, 'findById').mockReturnValueOnce({
       exec: jest.fn().mockResolvedValue(null),
     } as any);
 
-    await expect(service.removeContentFromTrail('invalidTrailId', 'mockContentId')).rejects.toThrow(NotFoundException);
+    await expect(
+      service.removeContentFromTrail('invalidTrailId', 'mockContentId'),
+    ).rejects.toThrow(NotFoundException);
   });
 
   it('should find a trail by ID', async () => {
@@ -112,7 +112,9 @@ describe('TrailService', () => {
       exec: jest.fn().mockResolvedValue(null),
     } as any);
 
-    await expect(service.findTrailById('invalidTrailId')).rejects.toThrow(NotFoundException);
+    await expect(service.findTrailById('invalidTrailId')).rejects.toThrow(
+      NotFoundException,
+    );
   });
 
   it('should return all trails', async () => {
@@ -125,7 +127,11 @@ describe('TrailService', () => {
     const updateData = { name: 'Updated Trail' };
     const result = await service.updateTrail('mockTrailId', updateData);
     expect(result).toEqual(mockTrail);
-    expect(trailModel.findByIdAndUpdate).toHaveBeenCalledWith('mockTrailId', updateData, { new: true });
+    expect(trailModel.findByIdAndUpdate).toHaveBeenCalledWith(
+      'mockTrailId',
+      updateData,
+      { new: true },
+    );
   });
 
   it('should throw NotFoundException if trail is not found when updating', async () => {
@@ -138,14 +144,13 @@ describe('TrailService', () => {
     ).rejects.toThrow(NotFoundException);
   });
 
-
-
   it('should throw NotFoundException if trail is not found when deleting', async () => {
     jest.spyOn(trailModel, 'findByIdAndDelete').mockReturnValueOnce({
       exec: jest.fn().mockResolvedValue(null),
     } as any);
 
-    await expect(service.deleteTrail('invalidTrailId')).rejects.toThrow(NotFoundException);
+    await expect(service.deleteTrail('invalidTrailId')).rejects.toThrow(
+      NotFoundException,
+    );
   });
 });
-

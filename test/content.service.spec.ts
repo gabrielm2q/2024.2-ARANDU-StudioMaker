@@ -1,17 +1,11 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { getModelToken } from '@nestjs/mongoose';
 import { NotFoundException } from '@nestjs/common';
-import { Model } from 'mongoose';
 import { ContentService } from 'src/content/content.service';
-import { Content } from 'src/content/content.schema';
-import { Trail } from 'src/trail/trail.schema';
 import { TrailService } from 'src/trail/trail.service';
 
 describe('ContentService', () => {
   let service: ContentService;
-  let contentModel: Model<Content>;
-  let trailModel: Model<Trail>;
-  let trailService: TrailService;
 
   const mockContentModel = {
     findById: jest.fn(),
@@ -51,9 +45,6 @@ describe('ContentService', () => {
     }).compile();
 
     service = module.get<ContentService>(ContentService);
-    contentModel = module.get<Model<Content>>(getModelToken('Content'));
-    trailModel = module.get<Model<Trail>>(getModelToken('Trail'));
-    trailService = module.get<TrailService>(TrailService);
   });
 
   it('should be defined', () => {

@@ -8,7 +8,6 @@ import { CreateJourneyDto } from 'src/journey/dtos/create-journey.dto';
 
 describe('JourneyController', () => {
   let controller: JourneyController;
-  let service: JourneyService;
 
   const mockJourneyService = {
     create: jest.fn(),
@@ -32,7 +31,6 @@ describe('JourneyController', () => {
     }).compile();
 
     controller = module.get<JourneyController>(JourneyController);
-    service = module.get<JourneyService>(JourneyService);
   });
 
   it('should be defined', () => {
@@ -43,11 +41,11 @@ describe('JourneyController', () => {
     it('should create a journey', async () => {
       const createJourneyDto: CreateJourneyDto = {
         title: '',
-        description: ''
+        description: '',
       };
       const token = 'test-token';
       const req = { headers: { authorization: `Bearer ${token}` } } as Request;
-      
+
       mockJourneyService.create.mockResolvedValue('some-value');
 
       const result = await controller.create(createJourneyDto, req);
@@ -61,11 +59,13 @@ describe('JourneyController', () => {
     it('should throw UnauthorizedException if token is not provided', async () => {
       const createJourneyDto: CreateJourneyDto = {
         title: '',
-        description: ''
+        description: '',
       };
       const req = { headers: {} } as Request;
 
-      await expect(controller.create(createJourneyDto, req)).rejects.toThrow(UnauthorizedException);
+      await expect(controller.create(createJourneyDto, req)).rejects.toThrow(
+        UnauthorizedException,
+      );
     });
   });
 
@@ -103,7 +103,7 @@ describe('JourneyController', () => {
       const id = 'journey-id';
       const updateJourneyDto: CreateJourneyDto = {
         title: '',
-        description: ''
+        description: '',
       };
       mockJourneyService.update.mockResolvedValue('updated-journey');
 

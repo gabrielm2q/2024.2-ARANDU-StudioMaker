@@ -5,10 +5,8 @@ import { ContentController } from 'src/content/content.controller';
 import { ContentService } from 'src/content/content.service';
 import { Content } from 'src/content/content.schema';
 
-
 describe('ContentController', () => {
   let controller: ContentController;
-  let service: ContentService;
 
   const mockContentService = {
     createContent: jest.fn(),
@@ -30,7 +28,6 @@ describe('ContentController', () => {
     }).compile();
 
     controller = module.get<ContentController>(ContentController);
-    service = module.get<ContentService>(ContentService);
   });
 
   it('should be defined', () => {
@@ -76,7 +73,7 @@ describe('ContentController', () => {
         title: 'Test Title',
         content: 'Test Content',
       } as Content;
-      
+
       mockContentService.findContentById.mockResolvedValue(content);
 
       const result = await controller.findContentById('content-id');
@@ -119,7 +116,7 @@ describe('ContentController', () => {
         title: 'Updated Title',
         content: 'Updated Content',
       } as Content;
-      
+
       mockContentService.updateContent.mockResolvedValue(content);
 
       const updateData = { title: 'Updated Title', content: 'Updated Content' };

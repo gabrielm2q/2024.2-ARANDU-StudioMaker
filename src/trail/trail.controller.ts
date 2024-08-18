@@ -58,12 +58,12 @@ export class TrailController {
   @Put(':id/removeContent')
   async removeContentFromTrail(
     @Param('id') trailId: string,
-    @Body() body: { contentId: string }
+    @Body() body: { contentId: string },
   ) {
     const { contentId } = body;
     return this.trailService.removeContentFromTrail(trailId, contentId);
   }
-  
+
   @Delete(':id')
   async deleteTrail(@Param('id') id: string) {
     await this.trailService.deleteTrail(id);
