@@ -1,6 +1,6 @@
-const REPO = '2024.1-CALCULUS-StudioMaker ';
+const REPO = '2024.1-CALCULUS-StudioMaker';
 const OWNER = 'fga-eps-mds';
-const SONAR_ID = 'fga-eps-mds_2024.1-CALCULUS-StudioMaker';
+const SONAR_ID = 'fga-eps-mds-1_2024-1-calculus-studiomaker';
 
 const METRIC_LIST = [
     'files',    
