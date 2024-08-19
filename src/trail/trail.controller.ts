@@ -35,6 +35,11 @@ export class TrailController {
     return this.trailService.findAllTrails();
   }
 
+  @Get('journey/:id')
+  async getTrailsByJourneyId(@Param('id') id: string) {
+    return this.trailService.findTrailsByJourneyId(id);
+  }
+
   @Put(':id')
   async updateTrail(
     @Param('id') id: string,
