@@ -82,7 +82,7 @@ export class TrailService {
     if (!journey) {
       throw new NotFoundException(`Journey with ID ${journeyId} not found`);
     }
-    return this.trailModel.find({ _id: { $in: journey.trails } }).exec();
+    return await this.trailModel.find({ journey: journeyId }).exec();
   }
   async updateTrail(id: string, updateData: Partial<Trail>): Promise<Trail> {
     const trail = await this.trailModel
