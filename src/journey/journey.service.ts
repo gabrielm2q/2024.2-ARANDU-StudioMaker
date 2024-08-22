@@ -110,6 +110,7 @@ export class JourneyService {
     if (!journey) {
       throw new NotFoundException(`Journey with ID ${id} not found`);
     }
+    this.logger.log(`Deleted journey with ID ${id}`);
     return journey;
   }
 
