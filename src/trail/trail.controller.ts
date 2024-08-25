@@ -7,13 +7,15 @@ import {
   Param,
   Body,
   NotFoundException,
+  Logger,
 } from '@nestjs/common';
 import { TrailService } from './trail.service';
+import { UpdateTrailsDtos } from 'src/journey/dtos/updateTrailsDtos';
 
 @Controller('trails')
 export class TrailController {
   constructor(private readonly trailService: TrailService) {}
-
+  private readonly logger = new Logger(TrailController.name)
   @Post()
   async createTrail(@Body() body: { name: string; journeyId: string }) {
     const { name, journeyId } = body;
@@ -74,4 +76,16 @@ export class TrailController {
     await this.trailService.deleteTrail(id);
     return { message: 'Trail deleted successfully' };
   }
+
+  @Put("/update-trail-order")
+  async updateTrailOrder(
+    @Param('id') id: string,
+    @Body() trailsDto: UpdateTrailsDtos,
+  ) {
+    this.logger.log(`list ${trailsDto}`)
+    this.trailService.updateTrailOrder(trailsDto.trails);
+    return 1;
+  }
 }
+
+
