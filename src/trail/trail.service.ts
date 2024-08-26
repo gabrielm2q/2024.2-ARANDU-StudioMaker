@@ -6,6 +6,7 @@ import { Journey } from 'src/journey/journey.schema';
 import { JourneyService } from 'src/journey/journey.service';
 import { query } from 'express';
 import { TrailInterface } from 'src/journey/dtos/updateTrailsDtos';
+import { object } from 'joi';
 
 @Injectable()
 export class TrailService {
@@ -106,12 +107,16 @@ export class TrailService {
   }
 
   async updateTrailOrder(trails: TrailInterface[]) {
-    for (var i=0;i<trails.length;i++){
-      console.log(`${i}: id: ${trails[i]._id}; new_order:${trails[i].order}`);
-      var q = this.trailModel.findByIdAndUpdate(trails[i]._id, {order:trails[i].order});
-    }
-
-
+    const bulkOperations = trails.map((trail) => ({
+      updateOne: {
+        filter: { _id: new Types.ObjectId(trail._id) },
+        update: { $set: { order: trail.order } }
+      }
+    }));
+  
+    const result = await this.trailModel.bulkWrite(bulkOperations);
+    console.log(`Bulk update result: ${JSON.stringify(result)}`);
+    return result;
   }
 }
 

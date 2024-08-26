@@ -8,9 +8,11 @@ import {
   Body,
   NotFoundException,
   Logger,
+  Patch,
 } from '@nestjs/common';
 import { TrailService } from './trail.service';
 import { UpdateTrailsDtos } from 'src/journey/dtos/updateTrailsDtos';
+import mongoose from 'mongoose';
 
 @Controller('trails')
 export class TrailController {
@@ -77,15 +79,15 @@ export class TrailController {
     return { message: 'Trail deleted successfully' };
   }
 
-  @Put("/update-trail-order")
-  async updateTrailOrder(
-    @Param('id') id: string,
-    @Body() trailsDto: UpdateTrailsDtos,
-  ) {
-    this.logger.log(`list ${trailsDto}`)
-    this.trailService.updateTrailOrder(trailsDto.trails);
-    return 1;
+  @Patch('/update-trail-order')
+  async updateTrailOrder(@Body() trailsDto: UpdateTrailsDtos) {
+    console.log(
+      `Updating trail order for the list: ${JSON.stringify(trailsDto.trails)}`,
+    );
+    const result = await this.trailService.updateTrailOrder(trailsDto.trails);
+    return result;
   }
+
 }
 
 
