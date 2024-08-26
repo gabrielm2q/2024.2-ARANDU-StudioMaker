@@ -21,18 +21,20 @@ export class TrailService {
     if (!journeyExists) {
       throw new NotFoundException(`Journey with ID ${journeyId} not found`);
     }
-
+  
+    const trailCount = journeyExists.trails.length;
+  
     const newTrail = new this.trailModel({
       name,
       journey: journeyId,
-      order: journeyExists.trails.length
+      order: trailCount, 
     });
-
+  
     await this.journeyService.addTrailToJourney(
       journeyId,
       newTrail._id.toString(),
     );
-
+  
     return newTrail.save();
   }
 

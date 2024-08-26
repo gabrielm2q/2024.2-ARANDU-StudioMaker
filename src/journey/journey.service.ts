@@ -122,15 +122,15 @@ export class JourneyService {
     if (!journey) {
       throw new NotFoundException(`Journey with ID ${journeyId} not found`);
     }
-
+  
     const objectId = new Types.ObjectId(trailId);
-
+  
     if (!journey.trails) {
       journey.trails = [];
     }
-
+  
     journey.trails.push(objectId);
-
+  
     return journey.save();
   }
 }
