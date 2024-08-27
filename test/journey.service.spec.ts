@@ -152,8 +152,6 @@ describe('JourneyService', () => {
     expect(result).toBe('userId123');
   });
 
-
-  
   it('should add a trail to the journey and return the updated journey', async () => {
     const journeyId = '605c72efc1d6f812a8e90b7a'; // Use um ObjectId válido
     const trailId = '605c72efc1d6f812a8e90b7b'; // Use um ObjectId válido
@@ -186,7 +184,9 @@ describe('JourneyService', () => {
       exec: jest.fn().mockResolvedValue(null),
     } as any);
 
-    await expect(service.addTrailToJourney(journeyId, trailId)).rejects.toThrow(NotFoundException);
+    await expect(service.addTrailToJourney(journeyId, trailId)).rejects.toThrow(
+      NotFoundException,
+    );
   });
 
   it('should return null when token is invalid', async () => {
@@ -203,13 +203,13 @@ describe('JourneyService', () => {
   });
 
   it('should handle error when adding journey to uset', async () => {
-    const userId = '605c72efc1d6f812a8e90b7a'; 
-    const journeyId = '605c72efc1d6f812a8e90b7b'; 
+    const userId = '605c72efc1d6f812a8e90b7a';
+    const journeyId = '605c72efc1d6f812a8e90b7b';
 
-    jest.spyOn(mockLogger, 'error').mockImplementation(() => {}); 
+    jest.spyOn(mockLogger, 'error').mockImplementation(() => {});
 
-    await expect(service.addJourneyToUser(userId, journeyId)).rejects.toThrow(NotFoundException);
-    
+    await expect(service.addJourneyToUser(userId, journeyId)).rejects.toThrow(
+      NotFoundException,
+    );
   });
-
 });
