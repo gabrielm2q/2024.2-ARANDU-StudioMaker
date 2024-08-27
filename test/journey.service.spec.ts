@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { JourneyService } from '../src/journey/journey.service';
 import { getModelToken } from '@nestjs/mongoose';
 import { HttpService } from '@nestjs/axios';
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
 import { Journey } from '../src/journey/journey.schema';
 import { CreateJourneyDto } from '../src/journey/dtos/create-journey.dto';
 import {
@@ -152,6 +152,43 @@ describe('JourneyService', () => {
     expect(result).toBe('userId123');
   });
 
+
+  
+  it('should add a trail to the journey and return the updated journey', async () => {
+    const journeyId = '605c72efc1d6f812a8e90b7a'; // Use um ObjectId válido
+    const trailId = '605c72efc1d6f812a8e90b7b'; // Use um ObjectId válido
+
+    // Mock da jornada atual
+    const mockJourneyWithTrail = {
+      ...mockJourney,
+      trails: [new Types.ObjectId(trailId)],
+    };
+
+    jest.spyOn(model, 'findById').mockReturnValueOnce({
+      exec: jest.fn().mockResolvedValue(mockJourney),
+    } as any);
+    jest
+      .spyOn(mockJourney, 'save')
+      .mockResolvedValue(mockJourneyWithTrail as any);
+
+    const result = await service.addTrailToJourney(journeyId, trailId);
+
+    expect(result).toEqual(mockJourneyWithTrail);
+    expect(model.findById).toHaveBeenCalledWith(journeyId);
+    expect(mockJourney.save).toHaveBeenCalled();
+  });
+
+  it('should throw NotFoundException if journey is not found', async () => {
+    const journeyId = 'invalidJourneyId';
+    const trailId = 'mockTrailId';
+
+    jest.spyOn(model, 'findById').mockReturnValueOnce({
+      exec: jest.fn().mockResolvedValue(null),
+    } as any);
+
+    await expect(service.addTrailToJourney(journeyId, trailId)).rejects.toThrow(NotFoundException);
+  });
+
   it('should return null when token is invalid', async () => {
     const token = 'invalidToken';
     const mockError = new Error('Token invalid');
@@ -164,4 +201,15 @@ describe('JourneyService', () => {
 
     expect(result).toBeNull();
   });
+
+  it('should handle error when adding journey to uset', async () => {
+    const userId = '605c72efc1d6f812a8e90b7a'; 
+    const journeyId = '605c72efc1d6f812a8e90b7b'; 
+
+    jest.spyOn(mockLogger, 'error').mockImplementation(() => {}); 
+
+    await expect(service.addJourneyToUser(userId, journeyId)).rejects.toThrow(NotFoundException);
+    
+  });
+
 });
