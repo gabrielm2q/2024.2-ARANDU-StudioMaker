@@ -15,4 +15,5 @@ export interface Journey extends mongoose.Document {
   description: string;
   user: mongoose.Schema.Types.ObjectId;
   trails?: mongoose.Types.ObjectId[];
+  order: { type: Number, default: 0};
 }

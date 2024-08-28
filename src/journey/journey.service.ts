@@ -10,6 +10,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import { Journey } from './journey.schema';
 import { CreateJourneyDto } from './dtos/create-journey.dto';
+import { JourneyInterface, UpdateJourneysDtos } from './dtos/updateJourneyOrder';
 
 @Injectable()
 export class JourneyService {
@@ -32,9 +33,12 @@ export class JourneyService {
       throw new UnauthorizedException('Invalid token');
     }
 
+    const user_jorneys_count = (await this.journeyModel.find({user:userId})).length;
+
     const newJourney = new this.journeyModel({
       ...createJourneyDto,
       user: userId,
+      order: user_jorneys_count
     });
     const savedJourney = await newJourney.save();
 
@@ -132,5 +136,18 @@ export class JourneyService {
     journey.trails.push(objectId);
   
     return journey.save();
+  }
+
+  async updateOrderJorney(journeys:JourneyInterface[]){
+    const bulkOperations = journeys.map((journey) => ({
+      updateOne: {
+        filter: { _id: new Types.ObjectId(journey._id) },
+        update: { $set: { order: journey.order } }
+      }
+    }));
+  
+    const result = await this.journeyModel.bulkWrite(bulkOperations);
+    console.log(`Bulk update result: ${JSON.stringify(result)}`);
+    return result;
   }
 }
