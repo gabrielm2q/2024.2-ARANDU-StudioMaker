@@ -68,4 +68,13 @@ export class ContentService {
       throw new NotFoundException(`Content with ID ${id} not found`);
     }
   }
+
+  async findContentsByTrailId(trailId: string): Promise<Content[]> {
+    const trail = await this.trailModel.findById(trailId).exec();
+    if (!trail) {
+      throw new NotFoundException(`Trail with ID ${trailId} not found`);
+    }
+    return await this.contentModel.find({ trail: trailId }).exec();
+  }
+  
 }
