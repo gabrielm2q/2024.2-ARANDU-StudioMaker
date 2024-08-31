@@ -17,7 +17,7 @@ import mongoose from 'mongoose';
 @Controller('trails')
 export class TrailController {
   constructor(private readonly trailService: TrailService) {}
-  private readonly logger = new Logger(TrailController.name)
+  private readonly logger = new Logger(TrailController.name);
   @Post()
   async createTrail(@Body() body: { name: string; journeyId: string }) {
     const { name, journeyId } = body;
@@ -87,7 +87,4 @@ export class TrailController {
     const result = await this.trailService.updateTrailOrder(trailsDto.trails);
     return result;
   }
-
 }
-
-

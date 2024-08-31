@@ -21,20 +21,20 @@ export class TrailService {
     if (!journeyExists) {
       throw new NotFoundException(`Journey with ID ${journeyId} not found`);
     }
-  
+
     const trailCount = journeyExists.trails.length;
-  
+
     const newTrail = new this.trailModel({
       name,
       journey: journeyId,
-      order: trailCount, 
+      order: trailCount,
     });
-  
+
     await this.journeyService.addTrailToJourney(
       journeyId,
       newTrail._id.toString(),
     );
-  
+
     return newTrail.save();
   }
 
@@ -112,14 +112,12 @@ export class TrailService {
     const bulkOperations = trails.map((trail) => ({
       updateOne: {
         filter: { _id: new Types.ObjectId(trail._id) },
-        update: { $set: { order: trail.order } }
-      }
+        update: { $set: { order: trail.order } },
+      },
     }));
-  
+
     const result = await this.trailModel.bulkWrite(bulkOperations);
     console.log(`Bulk update result: ${JSON.stringify(result)}`);
     return result;
   }
 }
-
-

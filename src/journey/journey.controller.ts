@@ -11,7 +11,6 @@ import {
 } from '@nestjs/common';
 import { JourneyService } from './journey.service';
 import { CreateJourneyDto } from './dtos/create-journey.dto';
-import { UpdateJourneysDtos } from './dtos/updateJourneyOrder';
 
 @Controller('journeys')
 export class JourneyController {
@@ -41,7 +40,7 @@ export class JourneyController {
   async findById(@Param('id') id: string) {
     return this.journeyService.findById(id);
   }
-  pfc15
+
   @Put(':id')
   async update(
     @Param('id') id: string,
@@ -61,13 +60,5 @@ export class JourneyController {
     @Body() body: { trailId: string },
   ) {
     return this.journeyService.addTrailToJourney(id, body.trailId);
-  }
-
-  @Patch("/update-journey-order")
-  async updateJourneyOrder(
-    @Body() journeysDto: UpdateJourneysDtos
-  ){
-    const retorno = await this.journeyService.updateOrderJorney(journeysDto.journeys);
-    return retorno;
   }
 }

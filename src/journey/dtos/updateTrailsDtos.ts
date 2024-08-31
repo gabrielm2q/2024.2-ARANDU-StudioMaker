@@ -1,5 +1,5 @@
 export interface TrailInterface {
-  order:number;
+  order: number;
   _id: string;
   name: string;
   journey: string;
