@@ -38,6 +38,11 @@ export class ContentController {
     return this.contentService.findAllContents();
   }
 
+  @Get('trail/:id')
+  async findContentsByTrailId(@Param('id') id: string) {
+    return this.contentService.findContentsByTrailId(id);
+  }
+
   @Patch(':id')
   async updateContent(
     @Param('id') id: string,

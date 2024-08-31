@@ -84,6 +84,7 @@ export class TrailService {
     }
     return await this.trailModel.find({ journey: journeyId }).exec();
   }
+
   async updateTrail(id: string, updateData: Partial<Trail>): Promise<Trail> {
     const trail = await this.trailModel
       .findByIdAndUpdate(id, updateData, { new: true })

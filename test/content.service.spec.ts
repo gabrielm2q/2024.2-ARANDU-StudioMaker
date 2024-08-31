@@ -171,4 +171,41 @@ describe('ContentService', () => {
       );
     });
   });
+
+  describe('findContentsByTrailId', () => {
+    it('deve retornar uma lista de conteúdos quando a trilha for encontrada', async () => {
+      const trailId = 'some-trail-id';
+      const mockTrail = { _id: trailId, name: 'Test Trail' };
+      const mockContents = [
+        { _id: 'content1', title: 'Content 1', trail: trailId },
+        { _id: 'content2', title: 'Content 2', trail: trailId },
+      ];
+
+      mockTrailModel.findById.mockReturnValueOnce({
+        exec: jest.fn().mockResolvedValue(mockTrail),
+      });
+
+      mockContentModel.find.mockReturnValueOnce({
+        exec: jest.fn().mockResolvedValue(mockContents),
+      });
+
+      const result = await service.findContentsByTrailId(trailId);
+      expect(result).toEqual(mockContents);
+      expect(mockTrailModel.findById).toHaveBeenCalledWith(trailId);
+      expect(mockContentModel.find).toHaveBeenCalledWith({ trail: trailId });
+    });
+
+    it('deve lançar uma exceção NotFoundException quando a trilha não for encontrada', async () => {
+      const trailId = 'some-trail-id';
+
+      mockTrailModel.findById.mockReturnValueOnce({
+        exec: jest.fn().mockResolvedValue(null),
+      });
+
+      await expect(service.findContentsByTrailId(trailId)).rejects.toThrow(
+        NotFoundException,
+      );
+    });
+  });
+
 });
