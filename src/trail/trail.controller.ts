@@ -11,7 +11,7 @@ import {
   Patch,
 } from '@nestjs/common';
 import { TrailService } from './trail.service';
-import { UpdateTrailsDtos } from 'src/journey/dtos/updateTrailsDtos';
+import { UpdateTrailsDtos } from 'src/trail/dtos/updateTrailsDtos';
 import mongoose from 'mongoose';
 
 @Controller('trails')
@@ -79,9 +79,9 @@ export class TrailController {
     return { message: 'Trail deleted successfully' };
   }
 
-  @Patch('/update-trail-order')
+  @Patch('update-trail-order')
   async updateTrailOrder(@Body() trailsDto: UpdateTrailsDtos) {
-    console.log(
+    this.logger.log(
       `Updating trail order for the list: ${JSON.stringify(trailsDto.trails)}`,
     );
     const result = await this.trailService.updateTrailOrder(trailsDto.trails);

@@ -1,15 +1,16 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import { Trail } from './trail.schema';
 import { Journey } from 'src/journey/journey.schema';
 import { JourneyService } from 'src/journey/journey.service';
 import { query } from 'express';
-import { TrailInterface } from 'src/journey/dtos/updateTrailsDtos';
+import { TrailInterface } from 'src/trail/dtos/updateTrailsDtos';
 import { object } from 'joi';
 
 @Injectable()
 export class TrailService {
+  private readonly logger = new Logger(TrailService.name);
   constructor(
     @InjectModel('Trail') private readonly trailModel: Model<Trail>,
     @InjectModel('Journey') private readonly journeyModel: Model<Journey>,
@@ -22,7 +23,7 @@ export class TrailService {
       throw new NotFoundException(`Journey with ID ${journeyId} not found`);
     }
 
-    const trailCount = journeyExists.trails.length;
+    const trailCount = journeyExists.trails.length + 1;
 
     const newTrail = new this.trailModel({
       name,
@@ -73,6 +74,7 @@ export class TrailService {
 
   async findTrailById(id: string): Promise<Trail> {
     const trail = await this.trailModel.findById(id).exec();
+    this.logger.log(`Found trail with ID ${trail}`);
     if (!trail) {
       throw new NotFoundException(`Trail with ID ${id} not found`);
     }

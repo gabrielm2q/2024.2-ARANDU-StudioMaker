@@ -8,12 +8,15 @@ import {
   Delete,
   Patch,
   NotFoundException,
+  Logger,
 } from '@nestjs/common';
 import { JourneyService } from './journey.service';
 import { CreateJourneyDto } from './dtos/create-journey.dto';
+import { UpdateJourneysOrderDto } from './dtos/updateJourneyOrder';
 
 @Controller('journeys')
 export class JourneyController {
+  private readonly logger = new Logger(JourneyController.name);
   constructor(private readonly journeyService: JourneyService) {}
 
   @Post()
@@ -32,7 +35,7 @@ export class JourneyController {
   }
 
   @Get('point/:id')
-  async findByUser(@Param('id') pointId: string) {
+  async findByPointId(@Param('id') pointId: string) {
     return this.journeyService.findByPointId(pointId);
   }
 
@@ -60,5 +63,14 @@ export class JourneyController {
     @Body() body: { trailId: string },
   ) {
     return this.journeyService.addTrailToJourney(id, body.trailId);
+  }
+
+  @Patch('update-journeys-order')
+  async updateTrailOrder(@Body() journeysDto: UpdateJourneysOrderDto) {
+    this.logger.log(
+      `Updating trail order for the list: ${JSON.stringify(journeysDto.journeys)}`,
+    );
+    const result = await this.journeyService.updateOrder(journeysDto.journeys);
+    return result;
   }
 }
