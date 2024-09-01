@@ -34,7 +34,6 @@ export class JourneyService {
       order: pointExist.journeys.length + 1,
     });
 
-
     const savedJourney = await newJourney.save();
 
     await this.pointService.addJourneyToPoint(
