@@ -1,14 +1,13 @@
 import { IsString, IsOptional, IsMongoId } from 'class-validator';
 
-export class CreateJourneyDto {
+export class CreateStartPointDto {
   @IsString()
-  title: string;
+  name: string;
 
-  @IsOptional()
   @IsString()
   description: string;
 
   @IsOptional()
   @IsMongoId()
-  pointId?: string;
+  user?: string;
 }

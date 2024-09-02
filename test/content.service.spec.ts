@@ -3,6 +3,8 @@ import { getModelToken } from '@nestjs/mongoose';
 import { NotFoundException } from '@nestjs/common';
 import { ContentService } from 'src/content/content.service';
 import { TrailService } from 'src/trail/trail.service';
+import { Types } from 'mongoose';
+import { ContentInterface } from 'src/content/dtos/update-content-order.dto';
 
 describe('ContentService', () => {
   let service: ContentService;
@@ -15,6 +17,7 @@ describe('ContentService', () => {
     exec: jest.fn(),
     save: jest.fn(),
     create: jest.fn().mockImplementation((dto) => dto),
+    bulkWrite: jest.fn(),
   };
 
   const mockTrailModel = {
@@ -172,40 +175,43 @@ describe('ContentService', () => {
     });
   });
 
-  describe('findContentsByTrailId', () => {
-    it('deve retornar uma lista de conteúdos quando a trilha for encontrada', async () => {
-      const trailId = 'some-trail-id';
-      const mockTrail = { _id: trailId, name: 'Test Trail' };
-      const mockContents = [
-        { _id: 'content1', title: 'Content 1', trail: trailId },
-        { _id: 'content2', title: 'Content 2', trail: trailId },
+  describe('updateContentOrder', () => {
+    it('should update content order for multiple contents', async () => {
+      const contents: ContentInterface[] = [
+        { _id: '605c72ef8c7e2a001f6e3e2e', order: 2 },
+        { _id: '605c72ef8c7e2a001f6e3e2f', order: 1 },
       ];
+      const bulkWriteResult = { acknowledged: true, modifiedCount: 2 };
 
-      mockTrailModel.findById.mockReturnValueOnce({
-        exec: jest.fn().mockResolvedValue(mockTrail),
-      });
+      mockContentModel.bulkWrite.mockResolvedValue(bulkWriteResult);
 
-      mockContentModel.find.mockReturnValueOnce({
-        exec: jest.fn().mockResolvedValue(mockContents),
-      });
-
-      const result = await service.findContentsByTrailId(trailId);
-      expect(result).toEqual(mockContents);
-      expect(mockTrailModel.findById).toHaveBeenCalledWith(trailId);
-      expect(mockContentModel.find).toHaveBeenCalledWith({ trail: trailId });
+      const result = await service.updateContentOrder(contents);
+      expect(result).toEqual(bulkWriteResult);
+      expect(mockContentModel.bulkWrite).toHaveBeenCalledWith([
+        {
+          updateOne: {
+            filter: { _id: new Types.ObjectId('605c72ef8c7e2a001f6e3e2e') },
+            update: { $set: { order: 2 } },
+          },
+        },
+        {
+          updateOne: {
+            filter: { _id: new Types.ObjectId('605c72ef8c7e2a001f6e3e2f') },
+            update: { $set: { order: 1 } },
+          },
+        },
+      ]);
     });
 
-    it('deve lançar uma exceção NotFoundException quando a trilha não for encontrada', async () => {
-      const trailId = 'some-trail-id';
+    it('should handle empty content list', async () => {
+      const contents: ContentInterface[] = [];
+      const bulkWriteResult = { acknowledged: true, modifiedCount: 0 };
 
-      mockTrailModel.findById.mockReturnValueOnce({
-        exec: jest.fn().mockResolvedValue(null),
-      });
+      mockContentModel.bulkWrite.mockResolvedValue(bulkWriteResult);
 
-      await expect(service.findContentsByTrailId(trailId)).rejects.toThrow(
-        NotFoundException,
-      );
+      const result = await service.updateContentOrder(contents);
+      expect(result).toEqual(bulkWriteResult);
+      expect(mockContentModel.bulkWrite).toHaveBeenCalledWith([]);
     });
   });
-
 });

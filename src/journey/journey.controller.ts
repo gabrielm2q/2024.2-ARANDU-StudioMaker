@@ -5,42 +5,38 @@ import {
   Body,
   Param,
   Put,
-  Req,
-  UnauthorizedException,
   Delete,
   Patch,
+  NotFoundException,
+  Logger,
 } from '@nestjs/common';
 import { JourneyService } from './journey.service';
-import { Request } from 'express';
 import { CreateJourneyDto } from './dtos/create-journey.dto';
+import { UpdateJourneysOrderDto } from './dtos/updateJourneyOrder';
 
 @Controller('journeys')
 export class JourneyController {
+  private readonly logger = new Logger(JourneyController.name);
   constructor(private readonly journeyService: JourneyService) {}
 
   @Post()
-  async create(
-    @Body() createJourneyDto: CreateJourneyDto,
-    @Req() req: Request,
-  ) {
-    const authHeader = req.headers.authorization as string;
-    const token = authHeader?.split(' ')[1];
+  async create(@Body() body: CreateJourneyDto) {
+    const pointId = body.pointId;
 
-    if (!token) {
-      throw new UnauthorizedException('Token not found');
+    if (!pointId) {
+      throw new NotFoundException('Point ID not provided in body');
     }
 
-    return this.journeyService.create(createJourneyDto, token);
+    return this.journeyService.create(body, pointId);
   }
-
   @Get()
   async findAll() {
     return this.journeyService.findAll();
   }
 
-  @Get('user/:id')
-  async findByUser(@Param('id') userId: string) {
-    return this.journeyService.findByUserId(userId);
+  @Get('point/:id')
+  async findByPointId(@Param('id') pointId: string) {
+    return this.journeyService.findByPointId(pointId);
   }
 
   @Get(':id')
@@ -67,5 +63,14 @@ export class JourneyController {
     @Body() body: { trailId: string },
   ) {
     return this.journeyService.addTrailToJourney(id, body.trailId);
+  }
+
+  @Patch('update-journeys-order')
+  async updateTrailOrder(@Body() journeysDto: UpdateJourneysOrderDto) {
+    this.logger.log(
+      `Updating trail order for the list: ${JSON.stringify(journeysDto.journeys)}`,
+    );
+    const result = await this.journeyService.updateOrder(journeysDto.journeys);
+    return result;
   }
 }

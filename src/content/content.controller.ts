@@ -7,12 +7,15 @@ import {
   Param,
   Body,
   NotFoundException,
+  Logger,
 } from '@nestjs/common';
 import { ContentService } from './content.service';
 import { Content } from './content.schema';
+import { UpdateContentsOrderDto } from './dtos/update-content-order.dto';
 
 @Controller('contents')
 export class ContentController {
+  private readonly logger = new Logger(ContentController.name);
   constructor(private readonly contentService: ContentService) {}
 
   @Post()
@@ -39,7 +42,7 @@ export class ContentController {
   }
 
   @Get('trail/:id')
-  async findContentsByTrailId(@Param('id') id: string) {
+  async findContentsByTrailId(@Param('id') id: string): Promise<Content[]> {
     return this.contentService.findContentsByTrailId(id);
   }
 
@@ -54,5 +57,16 @@ export class ContentController {
   @Delete(':id')
   async deleteContent(@Param('id') id: string): Promise<void> {
     return this.contentService.deleteContent(id);
+  }
+
+  @Patch('update-content-order')
+  async updateTrailOrder(@Body() contentsDto: UpdateContentsOrderDto) {
+    this.logger.log(
+      `Updating trail order for the list: ${JSON.stringify(contentsDto.contents)}`,
+    );
+    const result = await this.contentService.updateContentOrder(
+      contentsDto.contents,
+    );
+    return result;
   }
 }
