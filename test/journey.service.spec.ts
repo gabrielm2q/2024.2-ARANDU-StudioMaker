@@ -18,7 +18,7 @@ describe('JourneyService', () => {
     find: jest.fn(),
     exec: jest.fn(),
     create: jest.fn(),
-    bulkWrite: jest.fn(), // Adicionado para o novo método
+    bulkWrite: jest.fn(), 
   };
 
   const mockPointModel = {
@@ -264,3 +264,4 @@ describe('JourneyService', () => {
     });
   });
 });
+

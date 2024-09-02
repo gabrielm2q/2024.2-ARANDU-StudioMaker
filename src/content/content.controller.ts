@@ -70,3 +70,4 @@ export class ContentController {
     return result;
   }
 }
+
