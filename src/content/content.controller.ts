@@ -59,7 +59,7 @@ export class ContentController {
     return this.contentService.deleteContent(id);
   }
 
-  @Patch('update-content-order')
+  @Patch('order/update-order')
   async updateTrailOrder(@Body() contentsDto: UpdateContentsOrderDto) {
     this.logger.log(
       `Updating trail order for the list: ${JSON.stringify(contentsDto.contents)}`,
