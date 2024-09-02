@@ -64,7 +64,9 @@ export class ContentController {
     this.logger.log(
       `Updating trail order for the list: ${JSON.stringify(contentsDto.contents)}`,
     );
-    const result = await this.contentService.updateContentOrder(contentsDto.contents);
+    const result = await this.contentService.updateContentOrder(
+      contentsDto.contents,
+    );
     return result;
   }
 }

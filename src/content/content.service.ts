@@ -49,8 +49,7 @@ export class ContentService {
     if (!trail) {
       throw new NotFoundException(`Trail with ID ${trailId} not found`);
     }
-    return this.contentModel
-      .find({ trail: trailId }).exec();
+    return this.contentModel.find({ trail: trailId }).exec();
   }
 
   async findContentById(id: string): Promise<Content> {
@@ -84,7 +83,7 @@ export class ContentService {
       throw new NotFoundException(`Content with ID ${id} not found`);
     }
   }
-  
+
   async updateContentOrder(contents: ContentInterface[]) {
     const bulkOperations = contents.map((content) => ({
       updateOne: {

@@ -8,7 +8,7 @@ export interface JourneyInterface {
   trails?: string[];
   description?: string;
   user?: string;
-  order: Number;
+  order: number;
 }
 
 export class UpdateJourneysOrderDto {

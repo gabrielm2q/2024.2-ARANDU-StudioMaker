@@ -1,12 +1,12 @@
 export interface ContentInterface {
-  _id:string,
+  _id: string;
   title?: string;
   content?: string;
   trail?: string;
-  order?:Number;
-  createdAt?:string;
-  updatedAt?:string;
-  __v?:string;
+  order?: number;
+  createdAt?: string;
+  updatedAt?: string;
+  __v?: string;
 }
 
 export class UpdateContentsOrderDto {
