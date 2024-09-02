@@ -12,7 +12,6 @@ import {
 } from '@nestjs/common';
 import { TrailService } from './trail.service';
 import { UpdateTrailsDtos } from 'src/trail/dtos/updateTrailsDtos';
-import mongoose from 'mongoose';
 
 @Controller('trails')
 export class TrailController {

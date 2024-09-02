@@ -17,7 +17,7 @@ describe('ContentService', () => {
     exec: jest.fn(),
     save: jest.fn(),
     create: jest.fn().mockImplementation((dto) => dto),
-    bulkWrite: jest.fn(), 
+    bulkWrite: jest.fn(),
   };
 
   const mockTrailModel = {
@@ -178,7 +178,7 @@ describe('ContentService', () => {
   describe('updateContentOrder', () => {
     it('should update content order for multiple contents', async () => {
       const contents: ContentInterface[] = [
-        { _id: '605c72ef8c7e2a001f6e3e2e', order: 2 }, 
+        { _id: '605c72ef8c7e2a001f6e3e2e', order: 2 },
         { _id: '605c72ef8c7e2a001f6e3e2f', order: 1 },
       ];
       const bulkWriteResult = { acknowledged: true, modifiedCount: 2 };

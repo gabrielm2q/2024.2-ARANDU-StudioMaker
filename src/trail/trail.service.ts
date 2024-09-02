@@ -4,9 +4,7 @@ import { Model, Types } from 'mongoose';
 import { Trail } from './trail.schema';
 import { Journey } from 'src/journey/journey.schema';
 import { JourneyService } from 'src/journey/journey.service';
-import { query } from 'express';
 import { TrailInterface } from 'src/trail/dtos/updateTrailsDtos';
-import { object } from 'joi';
 
 @Injectable()
 export class TrailService {

@@ -18,7 +18,7 @@ describe('JourneyService', () => {
     find: jest.fn(),
     exec: jest.fn(),
     create: jest.fn(),
-    bulkWrite: jest.fn(), 
+    bulkWrite: jest.fn(),
   };
 
   const mockPointModel = {
@@ -85,7 +85,6 @@ describe('JourneyService', () => {
         service.create(createJourneyDto, createJourneyDto.pointId),
       ).rejects.toThrow(NotFoundException);
     });
-
   });
 
   describe('findAll', () => {
@@ -199,13 +198,12 @@ describe('JourneyService', () => {
 
   describe('addTrailToJourney', () => {
     describe('addTrailToJourney', () => {
-
       it('should throw NotFoundException if journey does not exist', async () => {
         mockJourneyModel.findById.mockReturnValueOnce({
           exec: jest.fn().mockResolvedValue(null),
         });
 
-        const invalidTrailId = new Types.ObjectId().toHexString(); 
+        const invalidTrailId = new Types.ObjectId().toHexString();
 
         await expect(
           service.addTrailToJourney('invalid-journey-id', invalidTrailId),
@@ -264,4 +262,3 @@ describe('JourneyService', () => {
     });
   });
 });
-
