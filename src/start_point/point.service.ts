@@ -31,9 +31,13 @@ export class PointService {
       throw new UnauthorizedException('Invalid token');
     }
 
+    const existent_array = this.findAll();
+
+
     const newPoint = new this.pointModel({
       ...createStartPointDto,
       user: userId,
+      order: (await existent_array).length,
     });
 
     const savedPoint = await newPoint.save();
