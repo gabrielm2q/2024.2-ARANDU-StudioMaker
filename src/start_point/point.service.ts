@@ -10,6 +10,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import { Point } from './point.schema';
 import { CreateStartPointDto } from './dtos/create-start-point.dto';
+import { UpdatePointInterface} from './dtos/update-point.dto';
 
 @Injectable()
 export class PointService {
@@ -30,9 +31,13 @@ export class PointService {
       throw new UnauthorizedException('Invalid token');
     }
 
+    const existent_array = this.findAll();
+
+
     const newPoint = new this.pointModel({
       ...createStartPointDto,
       user: userId,
+      order: (await existent_array).length,
     });
 
     const savedPoint = await newPoint.save();
@@ -136,5 +141,19 @@ export class PointService {
       throw new NotFoundException(`Point with ID ${pointId} not found`);
     }
     return point.journeys || [];
+  }
+
+  async updateOrder(journeys: UpdatePointInterface[]) {
+    console.log(journeys);
+    const bulkOperations = journeys.map((trail) => ({
+      updateOne: {
+        filter: { _id: new Types.ObjectId(trail._id) },
+        update: { $set: { order: trail.order } },
+      },
+    }));
+
+    const result = await this.pointModel.bulkWrite(bulkOperations);
+    console.log(`Bulk update result: ${JSON.stringify(result)}`);
+    return result;
   }
 }

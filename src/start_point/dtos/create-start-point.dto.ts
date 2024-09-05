@@ -10,4 +10,6 @@ export class CreateStartPointDto {
   @IsOptional()
   @IsMongoId()
   user?: string;
+
+  order?: Number;
 }
