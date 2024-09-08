@@ -10,7 +10,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import { Point } from './point.schema';
 import { CreateStartPointDto } from './dtos/create-start-point.dto';
-import { UpdatePointInterface} from './dtos/update-point.dto';
+import { UpdatePointInterface } from './dtos/update-point.dto';
 
 @Injectable()
 export class PointService {
@@ -32,7 +32,6 @@ export class PointService {
     }
 
     const existent_array = this.findAll();
-
 
     const newPoint = new this.pointModel({
       ...createStartPointDto,

@@ -4,6 +4,8 @@ import { HttpService } from '@nestjs/axios';
 import { NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { of } from 'rxjs';
 import { PointService } from 'src/start_point/point.service';
+import { Types } from 'mongoose';
+import { UpdatePointInterface } from 'src/start_point/dtos/update-point.dto';
 
 describe('PointService', () => {
   let service: PointService;
@@ -19,6 +21,7 @@ describe('PointService', () => {
       findByIdAndDelete: jest.fn(),
       save: jest.fn(),
       exec: jest.fn(),
+      bulkWrite: jest.fn(),
     };
 
     mockHttpService = {
@@ -58,6 +61,40 @@ describe('PointService', () => {
         ),
       ).rejects.toThrow(UnauthorizedException);
     });
+  });
+
+  describe('create', () => {
+    it('should throw UnauthorizedException if token is invalid', async () => {
+      const createStartPointDto = {
+        name: 'Test Point',
+        description: 'Description',
+      };
+      const token = 'invalid-token';
+
+      jest.spyOn(service, 'validateTokenAndGetUserId').mockResolvedValue(null);
+
+      await expect(service.create(createStartPointDto, token)).rejects.toThrow(
+        UnauthorizedException,
+      );
+    });
+  });
+
+  describe('addPointToUser', () => {
+    it('should call the user service to add the point', async () => {
+      const userId = 'user-id';
+      const pointId = 'point-id';
+  
+      // Simula uma resposta bem-sucedida do patch
+      jest.spyOn(mockHttpService, 'patch').mockReturnValue(of({}));
+  
+      await service.addPointToUser(userId, pointId);
+  
+      expect(mockHttpService.patch).toHaveBeenCalledWith(
+        `${process.env.USER_SERVICE_URL}/${userId}/add-point`,
+        { pointId }
+      );
+    });
+  
   });
 
   describe('update', () => {
@@ -225,6 +262,112 @@ describe('PointService', () => {
       const userId = await service.validateTokenAndGetUserId(token);
 
       expect(userId).toBeNull();
+    });
+  });
+
+  describe('findByUserId', () => {
+    it('should return an array of points for the given userId', async () => {
+      const points = [
+        { _id: 'point-id-1', name: 'Point 1', user: 'user-id' },
+        { _id: 'point-id-2', name: 'Point 2', user: 'user-id' },
+      ];
+      mockPointModel.find.mockReturnValueOnce({
+        exec: jest.fn().mockResolvedValue(points),
+      });
+
+      const result = await service.findByUserId('user-id');
+
+      expect(result).toEqual(points);
+      expect(mockPointModel.find).toHaveBeenCalledWith({ user: 'user-id' });
+    });
+  });
+
+  describe('addJourneyToPoint', () => {
+    it('should add a journey to the point and return the updated point', async () => {
+      const pointId = new Types.ObjectId().toHexString(); // Use um ID válido para o ponto
+      const journeyId = new Types.ObjectId().toHexString(); // Use um ID válido para a jornada
+      const objectId = new Types.ObjectId(journeyId);
+
+      const point = {
+        _id: pointId,
+        name: 'Test Point',
+        journeys: [],
+        save: jest.fn().mockResolvedValue({
+          _id: pointId,
+          name: 'Test Point',
+          journeys: [objectId],
+        }),
+      };
+
+      mockPointModel.findById.mockReturnValueOnce({
+        exec: jest.fn().mockResolvedValue(point),
+      });
+
+      const result = await service.addJourneyToPoint(pointId, journeyId);
+
+      expect(result).toEqual({
+        _id: pointId,
+        name: 'Test Point',
+        journeys: [objectId],
+      });
+      expect(mockPointModel.findById).toHaveBeenCalledWith(pointId);
+      expect(point.journeys).toContainEqual(objectId); // Use toContainEqual aqui
+      expect(point.save).toHaveBeenCalled();
+    });
+
+    it('should throw NotFoundException if point does not exist', async () => {
+      const pointId = new Types.ObjectId().toHexString(); // Use um ID válido para o ponto
+      const journeyId = new Types.ObjectId().toHexString(); // Use um ID válido para a jornada
+
+      mockPointModel.findById.mockReturnValueOnce({
+        exec: jest.fn().mockResolvedValue(null),
+      });
+
+      await expect(
+        service.addJourneyToPoint(pointId, journeyId),
+      ).rejects.toThrow(NotFoundException);
+      expect(mockPointModel.findById).toHaveBeenCalledWith(pointId);
+    });
+  });
+
+  describe('updateOrder', () => {
+    it('should perform bulk updates and return the result', async () => {
+      const id1 = new Types.ObjectId();
+      const id2 = new Types.ObjectId();
+
+      const journeys: UpdatePointInterface[] = [
+        {
+          _id: id1.toHexString(),
+          order: 1,
+          name: 'Point A',
+          __v: 0,
+          createdAt: '',
+          updatedAt: '',
+        },
+        {
+          _id: id2.toHexString(),
+          order: 2,
+          name: 'Point B',
+          __v: 0,
+          createdAt: '',
+          updatedAt: '',
+        },
+      ];
+
+      const bulkOperations = journeys.map((trail) => ({
+        updateOne: {
+          filter: { _id: new Types.ObjectId(trail._id) },
+          update: { $set: { order: trail.order } },
+        },
+      }));
+
+      const result = { modifiedCount: 2, matchedCount: 2 };
+      mockPointModel.bulkWrite.mockResolvedValue(result);
+
+      const response = await service.updateOrder(journeys);
+
+      expect(mockPointModel.bulkWrite).toHaveBeenCalledWith(bulkOperations);
+      expect(response).toEqual(result);
     });
   });
 });
