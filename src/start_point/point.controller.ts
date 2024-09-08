@@ -14,7 +14,7 @@ import {
 import { PointService } from './point.service';
 import { Request } from 'express';
 import { CreateStartPointDto } from './dtos/create-start-point.dto';
-import { UpdatePointOrderDto} from './dtos/update-point.dto';
+import { UpdatePointOrderDto } from './dtos/update-point.dto';
 
 @Controller('points')
 export class PointController {
@@ -86,10 +86,10 @@ export class PointController {
   @Patch('/update-point-order')
   async updatePointOrder(
     @Body()
-    pointsDto: UpdatePointOrderDto
+    pointsDto: UpdatePointOrderDto,
   ) {
-    console.log(pointsDto)
+    console.log(pointsDto);
     const result = await this.pointService.updateOrder(pointsDto.points);
-    return result
+    return result;
   }
 }

@@ -6,7 +6,7 @@ export const PointSchema = new mongoose.Schema(
     description: { type: String, required: true },
     user: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
     journeys: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Journey' }],
-    order: { type:Number, default:0},
+    order: { type: Number, default: 0 },
   },
   { timestamps: true, collection: 'startpoints' },
 );
