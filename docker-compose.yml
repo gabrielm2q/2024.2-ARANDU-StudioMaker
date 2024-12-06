@@ -2,19 +2,18 @@ services:
   studio-api:
     container_name: studio-api
     restart: on-failure
-    build: .
-    environment:
-      - NODE_ENV=development
-    ports:
-      - 3002:3002
-    volumes:
-      - ./src:/app/src
-      - ./test:/app/test
     env_file:
       - .env
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: studio-api
+    ports:
+      - "3002:3002"
     networks:
-      - calculus-network
+      - arandu-network
 
 networks:
-  calculus-network:
+  arandu-network:
+    name: arandu-network
     driver: bridge
