@@ -13,6 +13,10 @@ COPY .env .env
 
 RUN npm run build
 
+PORT
+
 EXPOSE 3002
 
-CMD ["npm", "run", "start:dev"]
+ENV PORT 3002
+
+CMD ["npm", "run", "start:prod"]
