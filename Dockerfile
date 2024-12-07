@@ -13,8 +13,6 @@ COPY .env .env
 
 RUN npm run build
 
-PORT
-
 EXPOSE 3002
 
 ENV PORT 3002
