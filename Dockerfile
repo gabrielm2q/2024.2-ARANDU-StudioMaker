@@ -1,39 +1,17 @@
-FROM node:22-alpine AS base
-
-FROM base AS deps
-RUN apk update && apk add --no-cache libc6-compat
+FROM node:22-alpine
 
 WORKDIR /app
 
-COPY package.json package-lock.json* ./
-RUN \
-  if [ -f package-lock.json ]; then npm ci; \
-  fi
 
-FROM base AS builder
-WORKDIR /app
-COPY --from=deps /app/node_modules ./node_modules
-COPY . .
+COPY package*.json ./
 
 COPY .env .env
+RUN npm install
+
+COPY . .
+
 RUN npm run build
-
-FROM base AS runner
-WORKDIR /app
-
-ENV NODE_ENV=development
-
-RUN addgroup -g 1001 -S nodejs \
-  && adduser -S arandu -u 1001
-
-COPY --chown=arandu:nodejs --from=builder /app/dist ./dist
-COPY --chown=arandu:nodejs --from=builder /app/node_modules ./node_modules
-COPY --chown=arandu:nodejs --from=builder /app/.env ./.env
-
-USER arandu
 
 EXPOSE 3002
 
-ENV PORT=3002
-
-CMD ["node", "dist/src/main.js"]
+CMD ["npm", "run", "start:dev"]
